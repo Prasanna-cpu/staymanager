@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: 'postgres:16'
+    environment:
+      - POSTGRES_USER=${DATABASE_USERNAME_REGULAR}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD_REGULAR}
+      - POSTGRES_DB=${DATABASE_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME_REGULAR} -d ${DATABASE_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - "4010:4000"
+    environment:
+      - PORT=${PORT}
+      - SPRING_DATASOURCE_URL=${DATABASE_URL_LOCALHOST}
+      - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME_REGULAR}
+      - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD_REGULAR}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_GENERATE_DDL=true
+      - SPRING_JPA_PROPERTIES_FORMAT_SQL=true
+      - JWT_HEADER=${JWT_HEADER}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+    postgres_data:
+
+

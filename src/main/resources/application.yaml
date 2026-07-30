@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: staymanager
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    generate-ddl: true
+
+  datasource:
+    url: ${DATABASE_URL_LOCALHOST}
+    username: ${DATABASE_USERNAME_REGULAR}
+    password: ${DATABASE_PASSWORD_REGULAR}
+
+server:
+  port: ${PORT}
