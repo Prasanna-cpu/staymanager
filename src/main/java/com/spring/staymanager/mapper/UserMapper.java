@@ -11,11 +11,12 @@ public class UserMapper {
 
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
         userDTO.setPhoneNumber(user.getPhoneNumber());
         userDTO.setRole(user.getRole());
-        userDTO.setPassword(user.getPassword());
+//        userDTO.setPassword(user.getPassword());
 
-        if((long) user.getBookings().size() > 0){
+        if(user.getBookings() != null && !user.getBookings().isEmpty()){
             userDTO.setBookings(
                     user.getBookings().stream().map(BookingMapper::mapToBookingDTO).toList()
             );

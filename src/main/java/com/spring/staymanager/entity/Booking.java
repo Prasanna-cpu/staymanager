@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @Table(name = "bookings", check = {
         @CheckConstraint(constraint = "check_out_date > check_in_date"),
         @CheckConstraint(constraint = "number_of_adults >= 1"),
-        @CheckConstraint(constraint = "number_of_children > 0")
+        @CheckConstraint(constraint = "number_of_children >= 0")
 })
 public class Booking extends BaseEntity implements Serializable {
 
@@ -38,10 +38,10 @@ public class Booking extends BaseEntity implements Serializable {
     private Integer totalNumberOfGuests;
 
     @Column(name = "number_of_children", nullable = false)
-    private Integer numberOfChildren;
+    private Integer numberOfChildren = 0;
 
     @Column(name = "number_of_adults", nullable = false)
-    private Integer numberOfAdults;
+    private Integer numberOfAdults = 0;
 
     @Column(name = "booking_confirmation_code", nullable = false)
     private String bookingConfirmationCode;
@@ -56,8 +56,9 @@ public class Booking extends BaseEntity implements Serializable {
 
 
     public void calculateTotalNumberOfGuests(){
-        this.totalNumberOfGuests = this.numberOfAdults + this.numberOfChildren;
+        this.totalNumberOfGuests = (this.numberOfAdults == null ? 0 : this.numberOfAdults) + (this.numberOfChildren == null ? 0 : this.numberOfChildren);
     }
+
 
     public void setNumberOfAdults(Integer numberOfAdults){
         this.numberOfAdults = numberOfAdults;

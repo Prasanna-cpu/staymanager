@@ -18,21 +18,21 @@ import java.time.LocalDateTime;
 public class BaseEntity {
     @CreatedDate
     @Column(name = "created_at",updatable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
     @CreatedBy
     @Column(name = "created_by",updatable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdBy;
 
     @LastModifiedDate
-    @Column(name="updated_at",insertable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name="updated_at")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime updatedAt;
 
     @LastModifiedBy
-    @Column(name = "updated_by",insertable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "updated_by")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String updatedBy;
 }

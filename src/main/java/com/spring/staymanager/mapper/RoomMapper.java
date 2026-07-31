@@ -13,7 +13,7 @@ public class RoomMapper {
         roomDTO.setRoomPhotoUrl(room.getRoomPhotoUrl());
         roomDTO.setRoomType(room.getRoomType());
 
-        if(room.getBookings() != null){
+        if(room.getBookings() != null && !room.getBookings().isEmpty()){
             roomDTO.setBookings(
                     room.getBookings().stream().map(BookingMapper::mapToBookingDTO).toList()
             );
