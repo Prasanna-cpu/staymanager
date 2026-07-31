@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
-@EnableJpaAuditing(auditorAwareRef = "auditAwareImplementation")
+//@EnableJpaAuditing(auditorAwareRef = "auditAwareImplementation")
 public class StayManagerApplication {
 
 	public static void main(String[] args) {
