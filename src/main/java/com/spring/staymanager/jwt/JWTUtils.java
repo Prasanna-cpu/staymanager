@@ -109,7 +109,7 @@ public class JWTUtils {
     }
 
     public String extractUsername(String token) {
-        return extractClaims(token, claims -> claims.get("email", String.class));
+        return extractClaims(token, Claims::getSubject);
     }
 
     public boolean isValidToken(String token, UserDetails userDetails) {
