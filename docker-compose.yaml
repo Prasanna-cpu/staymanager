@@ -32,6 +32,10 @@ services:
       - SPRING_JPA_PROPERTIES_FORMAT_SQL=true
       - JWT_HEADER=${JWT_HEADER}
       - JWT_SECRET=${JWT_SECRET}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - AWS_BUCKET=${AWS_S3_BUCKET_NAME}
+      - AWS_REGION=${AWS_REGION}
     depends_on:
       postgres:
         condition: service_healthy
