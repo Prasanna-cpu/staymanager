@@ -81,7 +81,7 @@ public class RoomServiceImplementation implements RoomService {
         if (roomType != null) room.setRoomType(roomType);
         if (roomPrice != null) room.setRoomPrice(roomPrice);
         if (description != null) room.setRoomDescription(description);
-        if (imageUrl != null) room.setRoomPhotoUrl(imageUrl);
+        if (imageUrl != null && !imageUrl.isEmpty()) room.setRoomPhotoUrl(imageUrl);
 
         Room updatedRoom = roomRepository.save(room);
         RoomDTO updatedRoomDTO = RoomMapper.mapToRoomDTO(updatedRoom);
@@ -98,7 +98,7 @@ public class RoomServiceImplementation implements RoomService {
 
     @Override
     public List<RoomDTO> getAllAvailableRooms() {
-        List<Room> rooms = roomRepository.findAll();
+        List<Room> rooms = roomRepository.getAllAvailableRooms();
         List<RoomDTO> roomDTOS = rooms.stream().map(RoomMapper::mapToRoomDTO).toList();
         return roomDTOS;
     }

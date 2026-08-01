@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.webmvc.autoconfigure.error.AbstractErrorController;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,11 +45,12 @@ public class AuthServiceImplementation implements AuthService {
         RegisterResponse registerResponse = new RegisterResponse();
         User user = new User();
 
-        if(request.getRole() == null || request.getRole().toString().isEmpty()) {
-            user.setRole(Role.valueOf("ROLE_USER"));
-        }
+        String requestedRole = request.getRole() == null ? null : request.getRole().toString();
 
-        if(!request.getRole().toString().equals("ROLE_USER") && !request.getRole().toString().equals("ROLE_ADMIN")) {
+        if(requestedRole == null || requestedRole.isEmpty()) {
+            requestedRole = "ROLE_USER";
+        }
+        else if(!requestedRole.equals("ROLE_USER") && !requestedRole.equals("ROLE_ADMIN")) {
             throw new BadRequestException("Invalid role");
         }
 
@@ -63,7 +65,7 @@ public class AuthServiceImplementation implements AuthService {
 
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.valueOf(request.getRole().toString()));
+        user.setRole(Role.valueOf(requestedRole));
         user.setName(request.getName());
         user.setPhoneNumber(request.getPhoneNumber());
 
@@ -89,10 +91,14 @@ public class AuthServiceImplementation implements AuthService {
             throw new UnauthorizedAccessException("User not found, please register");
         }
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (AuthenticationException e) {
+            throw new UnauthorizedAccessException("Invalid credentials");
+        }
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                ()-> new ObjectNotFoundException("User not found")
+                () -> new UnauthorizedAccessException("Invalid credentials")
         );
         String accessToken = jwtUtils.getAccessTokenFromUserDetails(user);
         String refreshToken = jwtUtils.getRefreshTokenFromUserDetails(user);

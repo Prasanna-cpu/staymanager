@@ -34,27 +34,7 @@ public class BookingServiceImplementation implements BookingService  {
     private boolean roomIsAvailable(BookingDTO bookingRequest, List<Booking> existingBookings){
         return existingBookings
                 .stream()
-                .noneMatch(
-                        existingBooking ->
-                                bookingRequest.getCheckInDate().equals(existingBooking.getCheckInDate())
-                                        || bookingRequest.getCheckOutDate().isBefore(existingBooking.getCheckOutDate())
-                                        || (bookingRequest.getCheckInDate().isAfter(existingBooking.getCheckInDate())
-                                        && bookingRequest.getCheckInDate().isBefore(existingBooking.getCheckOutDate()))
-                                        || (bookingRequest.getCheckInDate().isBefore(existingBooking.getCheckInDate())
-
-                                        && bookingRequest.getCheckOutDate().equals(existingBooking.getCheckOutDate()))
-                                        || (bookingRequest.getCheckInDate().isBefore(existingBooking.getCheckInDate())
-
-                                        && bookingRequest.getCheckOutDate().isAfter(existingBooking.getCheckOutDate()))
-
-                                        || (bookingRequest.getCheckInDate().equals(existingBooking.getCheckOutDate())
-                                        && bookingRequest.getCheckOutDate().equals(existingBooking.getCheckInDate()))
-
-                                        || (bookingRequest.getCheckInDate().equals(existingBooking.getCheckOutDate())
-                                        && bookingRequest.getCheckOutDate().equals(bookingRequest.getCheckInDate()))
-
-                );
-
+                .noneMatch(existingBooking -> bookingRequest.getCheckInDate().isBefore(existingBooking.getCheckOutDate()) && bookingRequest.getCheckOutDate().isAfter(existingBooking.getCheckInDate()));
     }
 
     @Override
@@ -82,7 +62,7 @@ public class BookingServiceImplementation implements BookingService  {
         booking.setCheckOutDate(bookingDTO.getCheckOutDate());
         booking.setNumberOfAdults(bookingDTO.getNumberOfAdults());
         booking.setNumberOfChildren(bookingDTO.getNumberOfChildren());
-        booking.setTotalNumberOfGuests(bookingDTO.getTotalNumberOfGuests());
+//        booking.setTotalNumberOfGuests(bookingDTO.getTotalNumberOfGuests());
 
         Booking savedBooking = bookingRepository.save(booking);
         BookingDTO savedBookingDTO = BookingMapper.mapToBookingDTO(savedBooking);
