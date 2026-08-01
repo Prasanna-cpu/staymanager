@@ -43,7 +43,7 @@ public class Booking extends BaseEntity implements Serializable {
     @Column(name = "number_of_adults", nullable = false)
     private Integer numberOfAdults = 0;
 
-    @Column(name = "booking_confirmation_code", nullable = false)
+    @Column(name = "booking_confirmation_code", nullable = false, unique = true)
     private String bookingConfirmationCode;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -95,6 +95,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(ConflictingResourceException.class)
+    public ResponseEntity<ApiResponse> handleConflictingResourcesException(ConflictingResourceException ex){
+        ApiResponse apiResponse = new ApiResponse(
+                null,
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT
+        );
+        return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
+    }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiResponse> handleBadRequestException(BadRequestException ex){
+        ApiResponse apiResponse = new ApiResponse(
+                null,
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ApiResponse> handleUnauthorizedAccessException(UnauthorizedAccessException ex){
+        ApiResponse apiResponse = new ApiResponse(
+                null,
+                ex.getMessage(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED
+        );
+        return new ResponseEntity<>(apiResponse, HttpStatus.UNAUTHORIZED);
+    }
 
 }
