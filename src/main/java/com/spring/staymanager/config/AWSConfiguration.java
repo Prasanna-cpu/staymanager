@@ -15,7 +15,7 @@ public class AWSConfiguration {
     @Value("${aws.access.key}")
     private String accessKey;
 
-    @Value("${aws.secret.key}")
+    @Value("${aws.access.secret}")
     private String secretKey;
 
     @Value("${aws.bucket}")
@@ -31,7 +31,7 @@ public class AWSConfiguration {
                 AwsBasicCredentials.create(accessKey, secretKey);
 
         return S3Client.builder()
-                .region(Region.US_EAST_2)
+                .region(region != null ? Region.of(region) : Region.AP_SOUTH_1)
                 .credentialsProvider(
                         StaticCredentialsProvider.create(credentials))
                 .build();

@@ -53,7 +53,7 @@ public class AWSS3Service {
                     "https://%s.s3.%s.amazonaws.com/%s",
                     bucketName,
                     region != null ? region : Region.AP_SOUTH_1.id(),
-                    fileName
+                    generatedFileName
             );
 
         }
