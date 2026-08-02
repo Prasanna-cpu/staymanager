@@ -21,7 +21,7 @@ import java.time.LocalDate;
         @CheckConstraint(constraint = "check_out_date > check_in_date"),
         @CheckConstraint(constraint = "number_of_adults >= 1"),
         @CheckConstraint(constraint = "number_of_children >= 0")
-})
+}, indexes = @Index(name = "idx_booking_confirmation_code", columnList = "booking_confirmation_code"))
 public class Booking extends BaseEntity implements Serializable {
 
     @Id
