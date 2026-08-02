@@ -44,7 +44,7 @@ public class RoomController {
     }
 
     @GetMapping("/all-rooms")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN, ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<ApiResponse> getAllRoomsHandler(){
         List<RoomDTO> roomDTOS = roomService.getAllRooms();
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -58,7 +58,7 @@ public class RoomController {
     }
 
     @GetMapping("/room-types")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN, ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<ApiResponse> getAllRoomTypesHandler(){
         List<String> types = roomService.getAllRoomTypes();
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -72,7 +72,7 @@ public class RoomController {
     }
 
     @GetMapping("/room/{roomId}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN, ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<ApiResponse> getRoomByIdHandler(
             @PathVariable String roomId
     ){
@@ -88,7 +88,7 @@ public class RoomController {
     }
 
     @GetMapping("/available-rooms-by-date-and-type")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN, ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<ApiResponse> getAllAvailableRoomsByDataAndType(
             @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate checkInDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate checkOutDate,
@@ -106,7 +106,7 @@ public class RoomController {
     }
 
     @GetMapping("/available-rooms")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN, ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<ApiResponse> getAllAvailableRooms(){
         List<RoomDTO> roomDTOS = roomService.getAllAvailableRooms();
         return ResponseEntity.status(HttpStatus.OK).body(

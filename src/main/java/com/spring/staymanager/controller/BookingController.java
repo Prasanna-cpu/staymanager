@@ -22,8 +22,8 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-    @PostMapping("save-booking/{roomId}/{userId}")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @PostMapping("/save-booking/{roomId}/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> saveBookingHandler(
             @PathVariable String roomId,
             @PathVariable String userId,
@@ -53,7 +53,7 @@ public class BookingController {
         );
     }
 
-    @GetMapping("/bookings/code/{confirmationCode}")
+    @GetMapping("/code/{confirmationCode}")
     public ResponseEntity<ApiResponse> getAllBookingsByConfirmationCodeHandler(
             @PathVariable String confirmationCode
     ){
