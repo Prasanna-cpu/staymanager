@@ -12,6 +12,7 @@ public class RoomMapper {
         roomDTO.setRoomPrice(room.getRoomPrice());
         roomDTO.setRoomPhotoUrl(room.getRoomPhotoUrl());
         roomDTO.setRoomType(room.getRoomType());
+        roomDTO.setRoomDescription(room.getRoomDescription());
 
         if(room.getBookings() != null && !room.getBookings().isEmpty()){
             roomDTO.setBookings(
@@ -33,6 +34,7 @@ public class RoomMapper {
         room.setRoomPrice(roomDTO.getRoomPrice());
         room.setRoomPhotoUrl(roomDTO.getRoomPhotoUrl());
         room.setRoomType(roomDTO.getRoomType());
+        room.setRoomDescription(roomDTO.getRoomDescription());
 
         return room;
     }

@@ -36,8 +36,6 @@ public class Room extends BaseEntity implements Serializable {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Booking> bookings = new ArrayList<>();
 
-
-
     private String roomDescription;
 
 }

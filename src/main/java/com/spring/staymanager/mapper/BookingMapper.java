@@ -16,13 +16,11 @@ public class BookingMapper {
         bookingDTO.setTotalNumberOfGuests(booking.getTotalNumberOfGuests());
         bookingDTO.setBookingConfirmationCode(booking.getBookingConfirmationCode());
 
-        if(booking.getUser() != null){
-            bookingDTO.setUser(UserMapper.mapToUserDTO(booking.getUser()));
-        }
+        // Removed circular reference - user is already mapped in UserMapper
 
-        if(booking.getRoom() != null){
-            bookingDTO.setRoom(RoomMapper.mapToRoomDTO(booking.getRoom()));
-        }
+//        if(booking.getRoom() != null){
+//            bookingDTO.setRoom(RoomMapper.mapToRoomDTO(booking.getRoom()));
+//        }
 
         return bookingDTO;
     }

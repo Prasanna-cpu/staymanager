@@ -30,4 +30,6 @@ public class RoomDTO {
 
     private List<BookingDTO> bookings;
 
+    private String roomDescription;
+
 }
