@@ -36,7 +36,7 @@ public class AWSS3Service {
                 extension = fileName.substring(fileName.lastIndexOf("."));
             }
 
-            String generatedFileName = UUID.randomUUID() + extension;
+            String generatedFileName = "original/properties/" + UUID.randomUUID() + extension;
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
