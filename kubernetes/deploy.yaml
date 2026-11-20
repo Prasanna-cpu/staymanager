@@ -1,0 +1,136 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: staymanager
+  labels:
+    app: staymanager
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: staymanager
+  template:
+    metadata:
+      labels:
+        app: staymanager
+    spec:
+      containers:
+        - name: staymanager
+          image: staymanager:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 4000
+              protocol: TCP
+
+          env:
+            # Application configuration
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: staymanager-config
+                  key: PORT
+
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: staymanager-config
+                  key: DATABASE_NAME
+
+            # Database configuration
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: staymanager-config
+                  key: DATABASE_URL
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: staymanager-secret
+                  key: DATABASE_USERNAME_REGULAR
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: staymanager-secret
+                  key: DATABASE_PASSWORD_REGULAR
+
+            # JWT configuration
+            - name: JWT_HEADER
+              valueFrom:
+                configMapKeyRef:
+                  name: staymanager-config
+                  key: JWT_HEADER
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: staymanager-secret
+                  key: JWT_SECRET
+
+            # AWS configuration
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: staymanager-secret
+                  key: AWS_ACCESS_KEY
+
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: staymanager-secret
+                  key: AWS_SECRET_KEY
+
+            - name: AWS_S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: staymanager-config
+                  key: AWS_S3_BUCKET_NAME
+
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: staymanager-config
+                  key: AWS_REGION
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: staymanager-service
+  labels:
+    app: staymanager
+spec:
+  type: LoadBalancer
+  selector:
+    app: staymanager
+  ports:
+    - port: 80
+      targetPort: 4000
+      protocol: TCP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: staymanager-config
+data:
+  PORT: "4000"
+  DATABASE_NAME: "staymanagerdb"
+  POSTGRES_REGULAR_PORT: "5432"
+  DATABASE_URL: "jdbc:postgresql://postgres-service:5432/staymanagerdb"
+  JWT_HEADER: "Authorization"
+  AWS_S3_BUCKET_NAME: "staymanger"
+  AWS_REGION: "ap-south-1"
