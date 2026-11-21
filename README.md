@@ -1,8 +1,8 @@
 # 🏨 StayManager – Hotel Management System
 
-StayManager is a backend application built using **Java 25 and Spring Boot** that provides RESTful APIs for hotel management operations. It integrates secure authentication, PostgreSQL persistence, AWS S3 cloud storage, and serverless image processing using AWS Lambda.
+StayManager is a backend hotel management application built using **Java 25 and Spring Boot 4**, providing RESTful APIs with secure authentication, PostgreSQL persistence, and AWS cloud integrations.
 
-The project also incorporates Docker-based containerization and GitHub Actions CI/CD workflows to streamline application builds and delivery.
+The application incorporates **JWT authentication, Spring Security, AWS S3, AWS Lambda, Docker, Kubernetes, and GitHub Actions CI/CD** to demonstrate modern backend development and cloud-native deployment practices.
 
 ## 🚀 Key Features
 
@@ -11,12 +11,14 @@ The project also incorporates Docker-based containerization and GitHub Actions C
 - Spring Security integration.
 - OAuth2 Resource Server for JWT validation.
 - Role-based access control for secured API endpoints.
+- Centralized security configuration.
 
 ### 🏨 Hotel Management
 - RESTful APIs for hotel management operations.
 - Layered architecture separating controllers, services, and repositories.
 - Spring Data JPA and Hibernate for database persistence.
 - PostgreSQL integration for relational data management.
+- Request validation using Spring Boot Validation.
 
 ### ☁️ AWS S3 Integration
 - Cloud-based image storage using Amazon S3.
@@ -27,22 +29,29 @@ The project also incorporates Docker-based containerization and GitHub Actions C
 ### ⚡ Serverless Image Processing with AWS Lambda
 - Event-driven image processing using AWS Lambda.
 - Processes images uploaded under the `original/properties/` S3 prefix.
-- Automatically resizes images to **800 × 600** dimensions.
+- Automatically resizes images to 800 × 600 dimensions.
 - Handles EXIF orientation and transparent image backgrounds.
 - Converts supported image formats into optimized JPEG files.
 - Stores processed images under the `processed/` prefix.
-- Validates file formats and enforces a 15 MB upload-processing limit.
+- Validates file formats and enforces a 15 MB processing limit.
 
 ### 🔄 CI/CD with GitHub Actions
 - Automated CI/CD workflows using GitHub Actions.
-- Automates application build and validation workflows.
-- Integrates the build pipeline with the GitHub repository.
+- Automated application build and validation workflows.
+- Integration with the GitHub repository.
+- Repeatable build processes using Maven.
 
 ### 🐳 Docker & Containerization
 - Multi-stage Docker builds to separate application compilation and runtime environments.
 - Docker Compose for orchestrating the Spring Boot application and PostgreSQL.
 - PostgreSQL data persistence using Docker volumes.
 - Container health checks to improve service startup reliability.
+
+### ☸️ Kubernetes Deployment
+- Kubernetes deployment configuration maintained in a dedicated `kubernetes/` directory.
+- Kubernetes-based application deployment configuration.
+- Container orchestration for running the application in a Kubernetes environment.
+- Kubernetes command-line management using kubectl.
 
 ## 🛠️ Tech Stack
 
@@ -58,45 +67,88 @@ The project also incorporates Docker-based containerization and GitHub Actions C
 | Lambda Runtime | Python, Boto3, Pillow |
 | CI/CD | GitHub Actions |
 | Containerization | Docker, Docker Compose |
+| Container Orchestration | Kubernetes |
 | Build Tool | Apache Maven |
 | Libraries | JJWT, Lombok |
+| Validation | Spring Boot Validation |
 
-## 🏗️ Architecture
+## 🏗️ System Architecture
 
-StayManager uses a layered backend architecture with AWS services handling cloud storage and asynchronous image processing.
+StayManager follows a layered backend architecture with AWS services handling cloud storage and serverless image processing.
 
 ```text
-                   Client
-                      |
-                      v
-              Spring Boot API
-                      |
-              Spring Security
-                (JWT Validation)
-                      |
-                      v
-               REST Controllers
-                      |
-                      v
-                Service Layer
-                 /          \
-                /            \
-               v              v
-        Repository Layer   AWS S3 Service
-               |              |
-               v              v
-          PostgreSQL      Original Images
-                              |
-                              v
-                        AWS Lambda
-                      (Image Resizer)
-                              |
-                              v
-                       Processed Images
-                           (S3)
+                       Client
+                          |
+                          v
+                  Spring Boot API
+                          |
+                          v
+                  Spring Security
+                    JWT Validation
+                          |
+                          v
+                   REST Controllers
+                          |
+                          v
+                    Service Layer
+                     /         \
+                    /           \
+                   v             v
+          Repository Layer    AWS S3 Service
+                   |               |
+                   v               v
+              PostgreSQL      Original Images
+                                   |
+                                   v
+                              AWS Lambda
+                            Image Resizer
+                                   |
+                                   v
+                            Processed Images
+                                   |
+                                   v
+                              AWS S3
 ```
 
-### Image Processing Workflow
+### Infrastructure Architecture
+
+```text
+                  Developer
+                      |
+                      v
+                 GitHub Repo
+                      |
+                      v
+               GitHub Actions
+                 CI Pipeline
+                      |
+                      v
+                Maven Build
+                      |
+                      v
+                 Docker Image
+                      |
+                      v
+                  Kubernetes
+                  Deployment
+                      |
+                +-----+-----+
+                |           |
+                v           v
+          Spring Boot    PostgreSQL
+          Application     Database
+                |
+                v
+              AWS S3
+                |
+                v
+            AWS Lambda
+          Image Processing
+```
+
+*The infrastructure diagram represents the deployment workflow and logical components; actual connectivity depends on the Kubernetes and AWS configuration.*
+
+## 🖼️ AWS Lambda Image Processing Workflow
 
 1. The client uploads a property image through the Spring Boot application.
 2. The backend stores the original image in the configured AWS S3 bucket.
@@ -105,7 +157,7 @@ StayManager uses a layered backend architecture with AWS services handling cloud
 5. The image is resized to 800 × 600 and optimized as JPEG.
 6. The processed image is uploaded to the `processed/` prefix in the same S3 bucket.
 
-This approach offloads image processing from the main Spring Boot application and uses serverless execution for image transformation.
+This approach offloads image processing from the main Spring Boot application and uses event-driven serverless execution for image transformation.
 
 ## 📂 Project Structure
 
@@ -117,6 +169,8 @@ staymanager/
 │
 ├── .mvn/
 │   └── wrapper/                 # Maven Wrapper
+│
+├── kubernetes/                  # Kubernetes manifests
 │
 ├── lambda/
 │   └── image_resizer/
@@ -146,8 +200,10 @@ Ensure you have the following installed:
 - Java 25
 - Apache Maven 3.9+
 - Docker and Docker Compose
+- kubectl
+- A running Kubernetes cluster for Kubernetes deployment
 - AWS account with an S3 bucket
-- AWS credentials with appropriate S3 permissions
+- AWS credentials with appropriate permissions
 
 ### 1. Clone the Repository
 
@@ -159,7 +215,7 @@ cd staymanager
 
 ### 2. Configure Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root.
 
 ```env
 # Application
@@ -184,21 +240,28 @@ AWS_REGION=your_aws_region
 
 **Important:**
 - Never commit `.env` files or expose sensitive credentials.
-- Configure AWS credentials securely.
-- When running through Docker Compose, ensure the database URL uses the PostgreSQL service hostname (`postgres`) rather than `localhost`.
+- Use secure AWS credential management.
+- When running through Docker Compose, use the PostgreSQL service hostname instead of `localhost` in the database connection URL.
+- For Kubernetes, configure sensitive values using Kubernetes Secrets rather than committing credentials into manifest files.
 
 ### 3. Run Locally
 
 Build the application:
 
 ```bash
-mvn clean install
+./mvnw clean install
+```
+
+On Windows:
+
+```powershell
+.\mvnw.cmd clean install
 ```
 
 Start the Spring Boot application:
 
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 ### 4. Run with Docker Compose
@@ -221,6 +284,95 @@ To remove containers and associated database volumes:
 docker compose down -v
 ```
 
+## ☸️ Kubernetes Deployment
+
+StayManager includes Kubernetes deployment configurations in:
+
+```text
+kubernetes/
+```
+
+### Prerequisites
+
+- A running Kubernetes cluster.
+- kubectl configured to communicate with the cluster.
+- A built application container image accessible to the cluster.
+- Required application configuration and database connectivity.
+
+### 1. Build the Docker Image
+
+```bash
+docker build -t staymanager:latest .
+```
+
+For a remote Kubernetes cluster, push the image to a container registry accessible by the cluster and update the image reference in the deployment manifest.
+
+### 2. Verify Cluster Connectivity
+
+```bash
+kubectl cluster-info
+```
+
+Check available nodes:
+
+```bash
+kubectl get nodes
+```
+
+### 3. Apply Kubernetes Configurations
+
+Apply the manifests:
+
+```bash
+kubectl apply -f kubernetes/
+```
+
+### 4. Verify Deployment
+
+Check Kubernetes resources:
+
+```bash
+kubectl get all
+```
+
+Check pods:
+
+```bash
+kubectl get pods
+```
+
+Check services:
+
+```bash
+kubectl get services
+```
+
+Inspect deployment status:
+
+```bash
+kubectl get deployments
+```
+
+### 5. Inspect Application Logs
+
+```bash
+kubectl logs deployment/<deployment-name>
+```
+
+For interactive container debugging:
+
+```bash
+kubectl exec -it <pod-name> -- sh
+```
+
+### 6. Delete Kubernetes Resources
+
+```bash
+kubectl delete -f kubernetes/
+```
+
+**Note:** Ensure the image reference, environment configuration, database service connectivity, and application secrets match your Kubernetes manifests before deployment. The commands above assume the manifests are valid YAML resources organized under `kubernetes/`.
+
 ## ⚡ AWS Lambda Deployment
 
 The image-resizing Lambda function is located in:
@@ -231,10 +383,8 @@ lambda/image_resizer/lambda_function.py
 
 ### Dependencies
 
-The Lambda function uses:
-
-- `boto3` for AWS S3 operations.
-- `Pillow` for image processing.
+- Boto3 for AWS S3 operations.
+- Pillow for image processing.
 
 Package the dependencies according to the AWS Lambda Python runtime and deployment requirements.
 
@@ -246,7 +396,7 @@ Configure an S3 event notification for object-created events with the following 
 original/properties/
 ```
 
-The Lambda function processes supported image formats:
+Supported image formats:
 
 - JPEG
 - JPG
@@ -261,41 +411,52 @@ processed/properties/
 
 Ensure the Lambda execution role has appropriate permissions to read original objects and write processed objects to the S3 bucket.
 
-**Note:** Configure the S3 event notification so that it only triggers for original images, avoiding recursive Lambda invocations when processed images are uploaded.
+Configure event notifications to avoid triggering the Lambda function recursively when processed images are uploaded.
 
 ## 🔄 CI/CD Pipeline
 
-GitHub Actions is used to automate the project's CI/CD workflows.
-
-The workflow definitions are maintained in:
+GitHub Actions workflows are maintained in:
 
 ```text
 .github/workflows/
 ```
 
-This provides an automated approach to application integration and delivery, reducing repetitive manual build and validation steps.
+The CI/CD implementation automates application build and validation workflows.
+
+This provides a repeatable development workflow and helps identify build issues before changes are integrated.
 
 ## 🧪 Build and Testing
 
 Run automated tests:
 
 ```bash
-mvn test
+./mvnw test
 ```
 
 Build the application:
 
 ```bash
-mvn clean package
+./mvnw clean package
 ```
+
+## 🔐 Security Considerations
+
+- JWT-based authentication and authorization.
+- OAuth2 Resource Server for JWT validation.
+- Role-based API access control.
+- Secure environment-based configuration.
+- AWS IAM permissions for S3 and Lambda.
+- Kubernetes Secrets for sensitive configuration.
+- Avoid exposing database credentials in container images or source control.
 
 ## 🔮 Future Improvements
 
 - Integrate Amazon SES for transactional email notifications.
 - Introduce Testcontainers for integration testing.
-- Implement application monitoring and centralized logging.
-- Extend CI/CD workflows with automated cloud deployment.
-- Introduce caching for frequently accessed resources.
+- Implement centralized logging and application monitoring.
+- Extend CI/CD workflows with automated Kubernetes deployments.
+- Introduce Redis caching for frequently accessed resources.
+- Add Kubernetes resource limits, autoscaling, and readiness/liveness probes where appropriate.
 
 ## 👨‍💻 Author
 
